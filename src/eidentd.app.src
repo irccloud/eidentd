@@ -1,0 +1,12 @@
+{application, eidentd,
+ [
+  {description, "identd server"},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib
+                 ]},
+  {mod, { eidentd_app, []}},
+  {env, []}
+ ]}.
