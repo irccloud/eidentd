@@ -7,32 +7,36 @@ loop(Socket) ->
     case gen_tcp:recv(Socket, 0, ?TIMEOUT) of
         {ok, Line} ->
             {ok, {RemoteAddress, _ThisRemPort}} = inet:peername(Socket),
-            [OurPortS, TheirPortS] = string:tokens(Line, ", "),
-            {OurPort, _} = string:to_integer(OurPortS),
-            {TheirPort, _} = string:to_integer(TheirPortS),
-            case {validport(OurPort), validport(TheirPort)} of
-                {true, true} ->
-                    %% Sometimes, ircds do an ident request before we have registered it
-                    %% so a small delay before checking is added:
-                    timer:sleep(1000),
-                    case eidentd_registry:ident(RemoteAddress, TheirPort, OurPort) of
-                        {ok, {_Pid, UserId}} ->
-                            R = format_response(OurPort, TheirPort, UserId),
-                            gen_tcp:send(Socket, R),
-                            loop(Socket);
+            case string:tokens(Line, ", ") of
+                [OurPortS, TheirPortS] ->
+                    {OurPort, _} = string:to_integer(OurPortS),
+                    {TheirPort, _} = string:to_integer(TheirPortS),
+                    case {validport(OurPort), validport(TheirPort)} of
+                        {true, true} ->
+                            %% Sometimes, ircds do an ident request before we have registered it
+                            %% so a small delay before checking is added:
+                            timer:sleep(1000),
+                            case eidentd_registry:ident(RemoteAddress, TheirPort, OurPort) of
+                                {ok, {_Pid, UserId}} ->
+                                    R = format_response(OurPort, TheirPort, UserId),
+                                    gen_tcp:send(Socket, R),
+                                    loop(Socket);
+                                
+                                undefined ->
+                                    R = format_error(OurPort, TheirPort, "NO-USER"),
+                                    gen_tcp:send(Socket, R),
+                                    ok
+                            end;
                         
-                        undefined ->
-                            R = format_error(OurPort, TheirPort, "NO-USER"),
+                        _ -> 
+                            R = format_error(OurPort, TheirPort, "INVALID-PORT"),
                             gen_tcp:send(Socket, R),
                             ok
-                    end;                    
-                
-                _ -> 
-                    R = format_error(OurPort, TheirPort, "INVALID-PORT"),
-                    gen_tcp:send(Socket, R),
+                    end;
+                _ ->
+                    % Invalid request format, just close
                     ok
-            end;            
-
+            end;
         {error, timeout} ->
             ok;
         
