@@ -74,7 +74,6 @@ remove_by_pid(Pid, State) when is_pid(Pid) ->
             ets:delete(State#state.identdb, Key),
             {ok, State};
         _X ->
-            io:format("XXX ~p\n", [_X]),
             {not_found, State}
     end.
 
