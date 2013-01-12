@@ -3,10 +3,23 @@
 -export([loop/1]).
 -define(TIMEOUT, 10000). % if no query in this time, close socket
 
+get_peername(Socket) ->
+    {ok, {RemoteAddress, _ThisRemPort}} = inet:peername(Socket),
+    conv(RemoteAddress).
+
+%% Convert IPv4 address masquerading as IPv4 ones:
+conv({0,0,0,0,0,65535,AB,CD}) ->
+    {AB bsr 8,
+     AB band 2#0000000011111111,
+     CD bsr 8,
+     CD band 2#0000000011111111};
+conv(IP) ->
+    IP.
+
 loop(Socket) ->
     case gen_tcp:recv(Socket, 0, ?TIMEOUT) of
         {ok, Line} ->
-            {ok, {RemoteAddress, _ThisRemPort}} = inet:peername(Socket),
+            RemoteAddress = get_peername(Socket),
             case string:tokens(Line, ", ") of
                 [OurPortS, TheirPortS] ->
                     {OurPort, _} = string:to_integer(OurPortS),
