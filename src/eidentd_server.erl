@@ -6,7 +6,6 @@
 
 -define(TCP_OPTIONS, [list, 
                       inet6,
-                      {ipv6_v6only, false},
                       {packet, line}, 
                       {active, false}, 
                       {reuseaddr, true} ]).
