@@ -5,6 +5,8 @@
 -export([init/1, code_change/3, handle_call/3, handle_cast/2, handle_info/2, terminate/2]).
 
 -define(TCP_OPTIONS, [list, 
+                      inet6,
+                      {ipv6_v6only, false},
                       {packet, line}, 
                       {active, false}, 
                       {reuseaddr, true} ]).
