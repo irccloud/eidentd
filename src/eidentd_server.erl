@@ -15,7 +15,7 @@
                  lsocket=null }).
 
 start_link() ->
-    Port = get_opt(port, 20113),
+    Port = get_opt(port, 113),
     Ip   = get_opt(ip,   any),
     State = #state{port = Port, ip=Ip},
     error_logger:info_msg("eidentd listening on ~p:~w\n", [Ip,Port]),

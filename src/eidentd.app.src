@@ -1,12 +1,12 @@
 {application, eidentd,
  [
   {description, "identd server"},
-  {vsn, "1"},
+  {vsn, "2"},
   {registered, []},
   {applications, [
                   kernel,
                   stdlib
                  ]},
   {mod, { eidentd_app, []}},
-  {env, []}
+  {env, [{port, 113}, {ip, any}]}
  ]}.

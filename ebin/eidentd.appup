@@ -1,0 +1,3 @@
+{"2",
+[{"1", [ {restart_application, eidentd} ]}],
+[{"1", [ {restart_application, eidentd} ]}]}.
