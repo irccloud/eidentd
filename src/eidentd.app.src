@@ -3,6 +3,7 @@
   {description, "identd server"},
   {vsn, "2"},
   {registered, []},
+  {modules, []},
   {applications, [
                   kernel,
                   stdlib
