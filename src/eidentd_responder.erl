@@ -36,13 +36,13 @@ loop(Socket) ->
                                     loop(Socket);
                                 
                                 undefined ->
-                                    R = format_error(OurPort, TheirPort, "NO-USER"),
+                                    R = format_error(OurPortS, TheirPortS, "NO-USER"),
                                     gen_tcp:send(Socket, R),
                                     ok
                             end;
                         
                         _ -> 
-                            R = format_error(OurPort, TheirPort, "INVALID-PORT"),
+                            R = format_error(OurPortS, TheirPortS, "INVALID-PORT"),
                             gen_tcp:send(Socket, R),
                             ok
                     end;
@@ -68,7 +68,7 @@ format_response(OurPort, TheirPort, UserId) when is_list(UserId),
                   [OurPort, TheirPort, UserId]).
 
 
-format_error(OurPort, TheirPort, Reason) when is_integer(OurPort),
-                                              is_integer(TheirPort),
+format_error(OurPortS, TheirPortS, Reason) when is_list(OurPortS),
+                                              is_list(TheirPortS),
                                               is_list(Reason) ->
-    io_lib:format("~B, ~B : ERROR : ~s\r\n", [OurPort, TheirPort, Reason]).
+    io_lib:format("~s, ~s : ERROR : ~s\r\n", [OurPortS, TheirPortS, Reason]).
