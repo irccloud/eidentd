@@ -16,12 +16,22 @@ conv({0,0,0,0,0,65535,AB,CD}) ->
 conv(IP) ->
     IP.
 
+line_to_ports(Line) ->
+    case string:tokens(Line, ",") of
+        [OurPortS0, TheirPortS0] ->
+            OurPortS = re:replace(OurPortS0, "\\s+", "", [global, {return, list}]),
+            TheirPortS = re:replace(TheirPortS0, "\\s+", "", [global, {return, list}]),
+            {ok, {OurPortS, TheirPortS}};
+        _ ->
+            {error, invalid}
+    end.     
+
 loop(Socket) ->
     case gen_tcp:recv(Socket, 0, ?TIMEOUT) of
         {ok, Line} ->
             RemoteAddress = get_peername(Socket),
-            case string:tokens(Line, ", ") of
-                [OurPortS, TheirPortS] ->
+            case line_to_ports(Line) of
+                {ok, {OurPortS, TheirPortS}} ->
                     {OurPort, _} = string:to_integer(OurPortS),
                     {TheirPort, _} = string:to_integer(TheirPortS),
                     case {validport(OurPort), validport(TheirPort)} of
