@@ -1,7 +1,7 @@
 {application, eidentd,
  [
   {description, "identd server"},
-  {vsn, "2"},
+  {vsn, "3"},
   {registered, []},
   {modules, []},
   {applications, [
