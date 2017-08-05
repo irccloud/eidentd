@@ -7,7 +7,7 @@ get_peername(Socket) ->
     {ok, {RemoteAddress, _ThisRemPort}} = inet:peername(Socket),
     conv(RemoteAddress).
 
-%% Convert IPv4 address masquerading as IPv4 ones:
+%% Convert IPv4 address masquerading as IPv6 ones:
 conv({0,0,0,0,0,65535,AB,CD}) ->
     {AB bsr 8,
      AB band 2#0000000011111111,
